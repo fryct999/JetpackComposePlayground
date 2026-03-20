@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -47,23 +46,25 @@ val sampleSelectableItems = listOf(
 )
 
 // TODO 2: Создайте компонент для отображения одного элемента списка
-// @Composable
-// fun SelectableItemRow(
-//     item: SelectableItem,
-//     onCheckedChange: (Boolean) -> Unit
-// ) {
-//     Row(
-//         modifier = Modifier.fillMaxWidth().padding(8.dp),
-//         verticalAlignment = Alignment.CenterVertically
-//     ) {
-//         Checkbox(
-//             checked = item.isSelected,
-//             onCheckedChange = onCheckedChange
-//         )
-//         Spacer(modifier = Modifier.width(8.dp))
-//         Text(item.title)
-//     }
-// }
+@Composable
+fun SelectableItemRow(
+    item: SelectableItem,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = item.isSelected,
+            onCheckedChange = onCheckedChange
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(item.title)
+    }
+}
 
 @Composable
 fun SelectableListScreen() {
@@ -77,42 +78,46 @@ fun SelectableListScreen() {
                     text = "JCP-02: Список с выбором",
                     style = MaterialTheme.typography.headlineMedium
                 )
-                
+
                 // TODO 2: Реализовать список элементов с чекбоксами
-                // val items = remember { mutableStateListOf<SelectableItem>().apply { addAll(sampleSelectableItems) } }
-                
+                val items = remember {
+                    mutableStateListOf<SelectableItem>().apply {
+                        addAll(sampleSelectableItems)
+                    }
+                }
+
                 // TODO 3: Обеспечить возможность выбора каждого элемента
-                // LazyColumn {
-                //     items(items) { item ->
-                //         SelectableItemRow(
-                //             item = item,
-                //             onCheckedChange = { isChecked ->
-                //                 val index = items.indexOfFirst { it.id == item.id }
-                //                 if (index != -1) {
-                //                     items[index] = items[index].copy(isSelected = isChecked)
-                //                 }
-                //             }
-                //         )
-                //     }
-                // }
-                
+                LazyColumn {
+                    items(items) { item ->
+                        SelectableItemRow(
+                            item = item,
+                            onCheckedChange = { isChecked ->
+                                val index = items.indexOfFirst { it.id == item.id }
+                                if (index != -1) {
+                                    items[index] = items[index].copy(isSelected = isChecked)
+                                }
+                            }
+                        )
+                    }
+                }
+
                 // TODO 4: Отображать количество выбранных элементов под списком
-                // val selectedCount = items.count { it.isSelected }
-                // Text("Выбрано: $selectedCount из ${items.size}")
-                
+                val selectedCount = items.count { it.isSelected }
+                Text("Выбрано: $selectedCount из ${items.size}")
+
                 // TODO 5: Добавить кнопку "Выбрать все" / "Снять выбор"
-                // val allSelected = items.all { it.isSelected }
-                // Button(
-                //     onClick = {
-                //         val newState = !allSelected
-                //         for (i in items.indices) {
-                //             items[i] = items[i].copy(isSelected = newState)
-                //         }
-                //     }
-                // ) {
-                //     Text(if (allSelected) "Снять выбор" else "Выбрать все")
-                // }
-                
+                val allSelected = items.all { it.isSelected }
+                Button(
+                    onClick = {
+                        val newState = !allSelected
+                        for (i in items.indices) {
+                            items[i] = items[i].copy(isSelected = newState)
+                        }
+                    }
+                ) {
+                    Text(if (allSelected) "Снять выбор" else "Выбрать все")
+                }
+
                 Text(
                     "Здесь будет список с чекбоксами и счетчиком выбранных",
                     style = MaterialTheme.typography.bodyMedium

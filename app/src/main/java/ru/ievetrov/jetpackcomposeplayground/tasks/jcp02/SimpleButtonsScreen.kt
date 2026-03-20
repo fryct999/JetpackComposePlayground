@@ -1,8 +1,6 @@
 package ru.ievetrov.jetpackcomposeplayground.tasks.jcp02
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -10,10 +8,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,22 +39,30 @@ fun SimpleButtonsScreen() {
                     text = "JCP-02: Простое состояние кнопок",
                     style = MaterialTheme.typography.headlineMedium
                 )
-                
+
                 // TODO 1: Реализовать две кнопки с общим счётчиком нажатий
-                // Используйте: var count by remember { mutableStateOf(0) }
-                
+                var clickCount by remember { mutableIntStateOf(0) }
+
                 // TODO 2: Увеличивать счётчик на 1 при нажатии первой кнопки
-                // Button(onClick = { count++ }) { Text("+1") }
-                
-                // TODO 3: Уменьшать счётчик на 1 при нажатии второй кнопки
-                // Button(onClick = { count-- }) { Text("-1") }
-                
-                // TODO 4: Отображать текущее значение счётчика между кнопками
-                // Text("Счёт: $count", style = MaterialTheme.typography.headlineMedium)
-                
+                Button(
+                    onClick = { clickCount += 1 },
+                ) {
+                    Text(text = "Увеличить счетчик")
+                }
+
                 // TODO 5: Предотвратить возможность ухода счётчика в отрицательные значения
-                // Добавьте проверку: if (count > 0) count--
-                
+                // TODO 3: Уменьшать счётчик на 1 при нажатии второй кнопки
+                Button(
+                    onClick = {
+                        clickCount = if (clickCount - 1 >= 0) clickCount - 1 else 0
+                    },
+                ) {
+                    Text(text = "Уменьшить счетчик")
+                }
+
+                // TODO 4: Отображать текущее значение счётчика между кнопками
+                Text(text = "Click count: $clickCount")
+
                 Text(
                     "Здесь будут ваши кнопки и счётчик",
                     style = MaterialTheme.typography.bodyMedium
