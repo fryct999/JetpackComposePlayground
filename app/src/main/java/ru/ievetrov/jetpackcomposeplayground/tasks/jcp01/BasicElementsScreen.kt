@@ -1,11 +1,15 @@
 package ru.ievetrov.jetpackcomposeplayground.tasks.jcp01
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -20,10 +24,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.ievetrov.jetpackcomposeplayground.R
 import ru.ievetrov.jetpackcomposeplayground.ui.theme.JetpackComposePlaygroundTheme
 
 /**
@@ -40,17 +46,24 @@ import ru.ievetrov.jetpackcomposeplayground.ui.theme.JetpackComposePlaygroundThe
 @Composable
 fun BasicElementsScreen() {
     JetpackComposePlaygroundTheme {
+        val scrollState = rememberScrollState()
+
         Surface(
             modifier = Modifier.padding(16.dp),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier
+                    .verticalScroll(scrollState)
+                    .fillMaxSize()
+            ) {
                 Text(
                     text = "JCP-01: Базовые UI-элементы",
                     style = MaterialTheme.typography.headlineMedium
                 )
-                
-/**
+
+                /**
                  * ПРИМЕРЫ из урока - базовые компоненты:
                  * 
                  * // Текст
@@ -72,23 +85,90 @@ fun BasicElementsScreen() {
                  *     label = { Text("Введите текст") }
                  * )
                  */
-                
+
                 // TODO 1: Реализовать экран с элементами: Text, Button, Image
-                // Создайте различные Text с разными style
-                
+                Text(
+                    text = "Text example bodyMedium",
+                    Modifier.padding(top = 20.dp, bottom = 10.dp),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Text(
+                    text = "Text example displayMedium",
+                    Modifier.padding(top = 20.dp, bottom = 10.dp),
+                    style = MaterialTheme.typography.displayMedium
+                )
+
+                Text(
+                    text = "Text example headlineMedium",
+                    Modifier.padding(top = 20.dp, bottom = 10.dp),
+                    style = MaterialTheme.typography.headlineMedium
+                )
+
                 // TODO 2: Продемонстрировать варианты кнопок: Button, OutlinedButton, TextButton
-                // Покажите различия в стилях кнопок
-                
+                Button(
+                    onClick = {}
+                ) { Text("Button") }
+
+                OutlinedButton(
+                    onClick = {}
+                ) { Text("OutlinedButton") }
+
+                TextButton(
+                    onClick = {}
+                ) { Text("TextButton") }
+
                 // TODO 3: Создать пример с Image и различными contentScale
-                // Пример: Image(painterResource(R.drawable.sample), contentScale = ContentScale.Crop)
-                // Попробуйте: ContentScale.Fit, ContentScale.FillWidth, ContentScale.Inside
-                
+                Image(
+                    painter = painterResource(id = R.drawable.img_ervar2),
+                    contentDescription = "description",
+                    modifier = Modifier
+                        .size(140.dp)
+                        .background(Color.Gray),
+                    contentScale = ContentScale.Fit
+                )
+
+                Image(
+                    painter = painterResource(id = R.drawable.img_ervar2),
+                    contentDescription = "description",
+                    modifier = Modifier.size(140.dp),
+                    contentScale = ContentScale.Crop
+                )
+
                 // TODO 4: Добавить TextField для ввода текста
-                // Используйте: var text by remember { mutableStateOf("") }
-                
+                var textFieldState by remember { mutableStateOf("") }
+
+                TextField(
+                    value = textFieldState,
+                    onValueChange = { newText -> textFieldState = newText },
+                    placeholder = { Text("Enter text here.") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+
                 // TODO 5: Реализовать Card с составным содержимым
-                // Card { Column { Text() + Button() + Image() } }
-                
+                Card {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                    )
+                    {
+                        Text(text = "Card text")
+
+                        Button(
+                            onClick = {}
+                        ) {
+                            Text(text = "Button card text")
+                        }
+
+                        Image(
+                            painter = painterResource(id = R.drawable.img_ervar2),
+                            contentDescription = "description",
+                            modifier = Modifier.size(140.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+
                 Text(
                     "Здесь будут ваши базовые UI-элементы",
                     style = MaterialTheme.typography.bodyMedium
