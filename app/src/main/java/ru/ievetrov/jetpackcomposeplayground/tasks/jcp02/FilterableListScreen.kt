@@ -35,11 +35,11 @@ import ru.ievetrov.jetpackcomposeplayground.ui.theme.JetpackComposePlaygroundThe
  */
 
 // TODO 1: Создайте перечисление для категорий
-enum class ItemCategory(val displayName: String) { 
-    ALL("Все"), 
-    FOOD("Продукты"), 
-    ELECTRONICS("Электроника"), 
-    BOOKS("Книги"), 
+enum class ItemCategory(val displayName: String) {
+    ALL("Все"),
+    FOOD("Продукты"),
+    ELECTRONICS("Электроника"),
+    BOOKS("Книги"),
     CLOTHES("Одежда")
 }
 
@@ -75,45 +75,50 @@ fun FilterableListScreen() {
                     text = "JCP-02: Фильтрация списка",
                     style = MaterialTheme.typography.headlineMedium
                 )
-                
+
                 // TODO 3: Реализовать список элементов с фильтрацией по категориям
-                // var currentCategory by remember { mutableStateOf(ItemCategory.ALL) }
-                // val filteredItems = if (currentCategory == ItemCategory.ALL) {
-                //     sampleFilterableItems
-                // } else {
-                //     sampleFilterableItems.filter { it.category == currentCategory }
-                // }
-                
+                var currentCategory by remember { mutableStateOf(ItemCategory.ALL) }
+                val filteredItems = if (currentCategory == ItemCategory.ALL) {
+                    sampleFilterableItems
+                } else {
+                    sampleFilterableItems.filter { it.category == currentCategory }
+                }
+
                 // TODO 4: Добавить чипсы-фильтры
-                // FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                //     ItemCategory.values().forEach { category ->
-                //         FilterChip(
-                //             selected = currentCategory == category,
-                //             onClick = { currentCategory = category },
-                //             label = { Text(category.displayName) }
-                //         )
-                //     }
-                // }
-                
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    ItemCategory.entries.forEach { category ->
+                        FilterChip(
+                            selected = currentCategory == category,
+                            onClick = { currentCategory = category },
+                            label = { Text(category.displayName) }
+                        )
+                    }
+                }
+
                 // TODO 5: Обновлять отображаемый список при выборе фильтра
-                // LazyColumn {
-                //     items(filteredItems) { item ->
-                //         Card(
-                //             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                //         ) {
-                //             Column(modifier = Modifier.padding(16.dp)) {
-                //                 Text(item.title, style = MaterialTheme.typography.titleMedium)
-                //                 Text(item.category.displayName, style = MaterialTheme.typography.bodySmall)
-                //             }
-                //         }
-                //     }
-                // }
-                
+                LazyColumn {
+                    items(filteredItems) { item ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(item.title, style = MaterialTheme.typography.titleMedium)
+                                Text(
+                                    item.category.displayName,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        }
+                    }
+                }
+
                 // TODO 6: Добавить кнопку сброса всех фильтров
-                // Button(onClick = { currentCategory = ItemCategory.ALL }) {
-                //     Text("Сбросить фильтры")
-                // }
-                
+                Button(onClick = { currentCategory = ItemCategory.ALL }) {
+                    Text("Сбросить фильтры")
+                }
+
                 Text(
                     "Здесь будет список с фильтрами-чипсами по категориям",
                     style = MaterialTheme.typography.bodyMedium
