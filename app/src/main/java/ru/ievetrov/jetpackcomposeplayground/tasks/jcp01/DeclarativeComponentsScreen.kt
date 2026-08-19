@@ -2,20 +2,12 @@ package ru.ievetrov.jetpackcomposeplayground.tasks.jcp01
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.ievetrov.jetpackcomposeplayground.ui.theme.JetpackComposePlaygroundTheme
@@ -74,11 +66,11 @@ fun DeclarativeComponentsScreen() {
                     text = "JCP-01: Декларативные компоненты",
                     style = MaterialTheme.typography.headlineMedium
                 )
-                
+
                 // После реализации заданий 1-4, добавьте ваши компоненты здесь:
-                // Greeting("Мир") 
-                // Greeting("Студент", isHighlighted = true) 
-                
+                Greeting("Мир")
+                Greeting("Студент", isHighlighted = true)
+
                 // Пример использования:
                 Text(
                     "Здесь будут ваши компоненты после выполнения заданий",
@@ -89,8 +81,38 @@ fun DeclarativeComponentsScreen() {
     }
 }
 
+@Composable
+fun Greeting(name: String, isHighlighted: Boolean = false) {
+    val color = if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
+    val style = if (isHighlighted) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.bodyMedium
+
+    Text(
+        text = name,
+        modifier = Modifier
+            .padding(10.dp)
+            .background(color)
+            .padding(10.dp),
+        style = style,
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun DeclarativeComponentsScreenPreview() {
     DeclarativeComponentsScreen()
-} 
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingNonIsHighlightedPreview() {
+    Greeting(name = "Frodo")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingIsHighlightedPreview() {
+    Greeting(
+        name = "River",
+        isHighlighted = true,
+    )
+}

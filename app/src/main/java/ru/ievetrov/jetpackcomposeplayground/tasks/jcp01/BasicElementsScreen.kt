@@ -1,11 +1,17 @@
 package ru.ievetrov.jetpackcomposeplayground.tasks.jcp01
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -20,10 +26,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.ievetrov.jetpackcomposeplayground.R
+
+
 import ru.ievetrov.jetpackcomposeplayground.ui.theme.JetpackComposePlaygroundTheme
 
 /**
@@ -44,13 +54,20 @@ fun BasicElementsScreen() {
             modifier = Modifier.padding(16.dp),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column {
+            val scrollState = rememberScrollState()
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .verticalScroll(scrollState)
+            ) {
                 Text(
                     text = "JCP-01: Базовые UI-элементы",
                     style = MaterialTheme.typography.headlineMedium
                 )
-                
-/**
+
+                /**
                  * ПРИМЕРЫ из урока - базовые компоненты:
                  * 
                  * // Текст
@@ -72,27 +89,205 @@ fun BasicElementsScreen() {
                  *     label = { Text("Введите текст") }
                  * )
                  */
-                
+
                 // TODO 1: Реализовать экран с элементами: Text, Button, Image
                 // Создайте различные Text с разными style
-                
+
                 // TODO 2: Продемонстрировать варианты кнопок: Button, OutlinedButton, TextButton
                 // Покажите различия в стилях кнопок
-                
+
                 // TODO 3: Создать пример с Image и различными contentScale
                 // Пример: Image(painterResource(R.drawable.sample), contentScale = ContentScale.Crop)
                 // Попробуйте: ContentScale.Fit, ContentScale.FillWidth, ContentScale.Inside
-                
+
                 // TODO 4: Добавить TextField для ввода текста
                 // Используйте: var text by remember { mutableStateOf("") }
-                
+
                 // TODO 5: Реализовать Card с составным содержимым
                 // Card { Column { Text() + Button() + Image() } }
-                
+
                 Text(
-                    "Здесь будут ваши базовые UI-элементы",
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "Здесь будут ваши базовые UI-элементы",
+                    style = MaterialTheme.typography.bodyMedium,
                 )
+
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(16.dp),
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp),
+                ) {
+                    Text(
+                        text = "Заголовок",
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+
+                    Image(
+                        painter = painterResource(R.drawable.ic_launcher_foreground),
+                        contentDescription = "",
+                        modifier = Modifier.border(2.dp, Color.Red)
+                    )
+
+                    Text(
+                        text = "Пример картинки",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+
+                    Button(
+                        onClick = {},
+                    ) {
+                        Text(
+                            text = "Жмякс",
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
+                }
+
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(16.dp),
+                )
+
+                Column {
+                    Button(
+                        onClick = {},
+                        modifier = Modifier.padding(5.dp),
+                    ) {
+                        Text(
+                            text = "Обычный Button",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+
+                    OutlinedButton(
+                        onClick = {},
+                        modifier = Modifier.padding(5.dp),
+                    ) {
+                        Text(
+                            text = "OutlinedButton",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+
+                    TextButton(
+                        onClick = {},
+                        modifier = Modifier.padding(5.dp),
+                    ) {
+                        Text(
+                            text = "TextButton",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
+
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(16.dp),
+                )
+
+                Column {
+                    Image(
+                        painter = painterResource(R.drawable.ervar),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .size(200.dp)
+                            .background(Color.Gray),
+                        contentScale = ContentScale.Crop,
+                    )
+
+                    Image(
+                        painter = painterResource(R.drawable.ervar),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .size(200.dp)
+                            .background(Color.Gray),
+                        contentScale = ContentScale.Fit,
+                    )
+
+                    Image(
+                        painter = painterResource(R.drawable.ervar),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .size(200.dp)
+                            .background(Color.Gray),
+                        contentScale = ContentScale.FillWidth,
+                    )
+
+                    Image(
+                        painter = painterResource(R.drawable.ervar),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .size(200.dp)
+                            .background(Color.Gray),
+                        contentScale = ContentScale.Inside,
+                    )
+                }
+
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(16.dp),
+                )
+
+                var text by remember { mutableStateOf("") }
+
+                Text(
+                    text = "Введенный текст - $text",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    label = { Text(text = "Введите текст") },
+                )
+
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(16.dp),
+                )
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(
+                        modifier = Modifier.padding(5.dp)
+                    ) {
+                        Text(
+                            text = "Заголовок",
+                            style = MaterialTheme.typography.headlineMedium,
+                        )
+
+                        Image(
+                            painter = painterResource(R.drawable.ervar),
+                            contentDescription = "",
+                            modifier = Modifier.size(30.dp),
+                            contentScale = ContentScale.Crop,
+                        )
+
+                        Button(
+                            onClick = {},
+                        ) {
+                            Text(
+                                text = "Кнопка",
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
+                    }
+                }
             }
         }
     }
