@@ -2,8 +2,10 @@ package ru.ievetrov.jetpackcomposeplayground.tasks.jcp02
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,20 +22,36 @@ import ru.ievetrov.jetpackcomposeplayground.ui.theme.JetpackComposePlaygroundThe
 @Composable
 fun ChildComponent(
     // TODO: Добавьте параметры для поднятого состояния
-    // value: String,
-    // onValueChange: (String) -> Unit,
-    // counterValue: Int,
-    // onIncrementCounter: () -> Unit,
-    // isEnabled: Boolean,
-    // onToggleEnabled: () -> Unit
+    value: String,
+    onValueChange: (String) -> Unit,
+    counterValue: Int,
+    onIncrementCounter: () -> Unit,
+    isEnabled: Boolean,
+    onToggleEnabled: () -> Unit
 ) {
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = "Компонент-потомок",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
         )
         
         // TODO: Реализуйте интерфейс с использованием переданных параметров
+        TextField(
+            value = value,
+            onValueChange = onValueChange,
+        )
+
+        Button(
+            onClick = onIncrementCounter,
+        ) {
+            Text(text = counterValue.toString())
+        }
+
+        Button(
+            onClick = onToggleEnabled,
+        ) {
+            Text(text = "$isEnabled")
+        }
     }
 }
 
