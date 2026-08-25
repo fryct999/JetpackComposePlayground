@@ -77,42 +77,44 @@ fun FilterableListScreen() {
                 )
                 
                 // TODO 3: Реализовать список элементов с фильтрацией по категориям
-                // var currentCategory by remember { mutableStateOf(ItemCategory.ALL) }
-                // val filteredItems = if (currentCategory == ItemCategory.ALL) {
-                //     sampleFilterableItems
-                // } else {
-                //     sampleFilterableItems.filter { it.category == currentCategory }
-                // }
+                 var currentCategory by remember { mutableStateOf(ItemCategory.ALL) }
+                 val filteredItems = if (currentCategory == ItemCategory.ALL) {
+                     sampleFilterableItems
+                 } else {
+                     sampleFilterableItems.filter { it.category == currentCategory }
+                 }
                 
                 // TODO 4: Добавить чипсы-фильтры
-                // FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                //     ItemCategory.values().forEach { category ->
-                //         FilterChip(
-                //             selected = currentCategory == category,
-                //             onClick = { currentCategory = category },
-                //             label = { Text(category.displayName) }
-                //         )
-                //     }
-                // }
+                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                     ItemCategory.entries.forEach { category ->
+                         FilterChip(
+                             selected = currentCategory == category,
+                             onClick = { currentCategory = category },
+                             label = { Text(category.displayName) }
+                         )
+                     }
+                 }
                 
                 // TODO 5: Обновлять отображаемый список при выборе фильтра
-                // LazyColumn {
-                //     items(filteredItems) { item ->
-                //         Card(
-                //             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                //         ) {
-                //             Column(modifier = Modifier.padding(16.dp)) {
-                //                 Text(item.title, style = MaterialTheme.typography.titleMedium)
-                //                 Text(item.category.displayName, style = MaterialTheme.typography.bodySmall)
-                //             }
-                //         }
-                //     }
-                // }
+                 LazyColumn {
+                     items(filteredItems) { item ->
+                         Card(
+                             modifier = Modifier
+                                 .fillMaxWidth()
+                                 .padding(vertical = 4.dp)
+                         ) {
+                             Column(modifier = Modifier.padding(16.dp)) {
+                                 Text(item.title, style = MaterialTheme.typography.titleMedium)
+                                 Text(item.category.displayName, style = MaterialTheme.typography.bodySmall)
+                             }
+                         }
+                     }
+                 }
                 
                 // TODO 6: Добавить кнопку сброса всех фильтров
-                // Button(onClick = { currentCategory = ItemCategory.ALL }) {
-                //     Text("Сбросить фильтры")
-                // }
+                Button(onClick = { currentCategory = ItemCategory.ALL }) {
+                    Text("Сбросить фильтры")
+                }
                 
                 Text(
                     "Здесь будет список с фильтрами-чипсами по категориям",
