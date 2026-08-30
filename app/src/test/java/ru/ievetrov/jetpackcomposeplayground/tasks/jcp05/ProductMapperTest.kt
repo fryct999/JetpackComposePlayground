@@ -1,9 +1,10 @@
 package ru.ievetrov.jetpackcomposeplayground.tasks.jcp05
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import ru.ievetrov.jetpackcomposeplayground.tasks.jcp05.ProductMapper.map
+import ru.ievetrov.jetpackcomposeplayground.tasks.jcp05.ProductMapper.mapList
 
 /**
  * JCP-05: Unit-тесты маппера продуктов
@@ -35,59 +36,84 @@ import org.junit.Test
  * }
  */
 class ProductMapperTest {
-
     // TODO 1: Протестируй маппинг одного DTO со всеми полями
     // Убедись, что id, name, price, description маппятся правильно
     @Test
     fun `maps DTO to UI model correctly`() {
-        // Arrange: создай ProductDto с заполненными полями
+        val dto = ProductDto(
+            id = 1,
+            name = "Name",
+            price = 100.0,
+            description = "Description",
+        )
 
-        // Act: вызови ProductMapper.map(dto)
+        val uiModel = map(dto)
 
-        // Assert: проверь каждое поле результата через assertEquals
+        assertEquals(1, uiModel.id)
+        assertEquals("Name", uiModel.name)
+        assertEquals("100.0", uiModel.price)
+        assertEquals("Description", uiModel.description)
     }
 
     // TODO 2: Протестируй обработку null-цены
     // Ожидается: price = "Цена не указана"
     @Test
     fun `handles null price`() {
-        // Arrange: создай ProductDto с price = null
+        val dto = ProductDto(
+            id = 1,
+            name = "Name",
+            price = null,
+            description = "Description",
+        )
 
-        // Act: вызови ProductMapper.map(dto)
+        val uiModel = map(dto)
 
-        // Assert: проверь, что цена = "Цена не указана"
+        assertEquals("Цена не указана", uiModel.price)
     }
 
     // TODO 3: Протестируй обработку null-описания
     // Ожидается: description = ""
     @Test
     fun `handles null description`() {
-        // Arrange: создай ProductDto с description = null
+        val dto = ProductDto(
+            id = 1,
+            name = "Name",
+            price = null,
+            description = null,
+        )
 
-        // Act: вызови ProductMapper.map(dto)
+        val uiModel = map(dto)
 
-        // Assert: проверь, что описание = ""
+        assertEquals("", uiModel.description)
     }
 
     // TODO 4: Протестируй маппинг списка из 3 DTO
     // Убедись, что размер результата = 3, и элементы маппятся верно
     @Test
     fun `maps list of DTOs correctly`() {
-        // Arrange: создай список из 3 ProductDto (например, Молоко, Хлеб, Сыр)
+        val dtoList = listOf(
+            ProductDto(1, "Продукт 1", 1.0, "Описание 1"),
+            ProductDto(2, "Продукт 2", 2.0, "Описание 2"),
+            ProductDto(3, "Продукт 3", 3.0, "Описание 3"),
+        )
 
-        // Act: вызови ProductMapper.mapList(dtos)
+        val uiModelList = mapList(dtoList)
 
-        // Assert: assertEquals(3, result.size), проверь имя первого элемента
+        assertEquals(3, uiModelList.size)
+        assertEquals(1, uiModelList[0].id)
+        assertEquals("Продукт 1", uiModelList[0].name)
+        assertEquals(2, uiModelList[1].id)
+        assertEquals("Продукт 2", uiModelList[1].name)
+        assertEquals(3, uiModelList[2].id)
+        assertEquals("Продукт 3", uiModelList[2].name)
     }
 
     // TODO 5: Протестируй маппинг пустого списка
     // Ожидается: пустой список
     @Test
     fun `handles empty list`() {
-        // Arrange: пустой список
-
-        // Act: вызови ProductMapper.mapList(emptyList())
-
-        // Assert: проверь, что результат пуст (assertEquals + isEmpty)
+        val dtoList: List<ProductDto> = emptyList()
+        val uiModelList = mapList(dtoList)
+        assertTrue(uiModelList.isEmpty())
     }
 }

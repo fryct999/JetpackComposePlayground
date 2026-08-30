@@ -2,8 +2,15 @@ package ru.ievetrov.jetpackcomposeplayground.tasks.jcp05
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
+
 
 /**
  * JCP-05: Unit-тесты валидатора формы
@@ -29,72 +36,47 @@ import org.junit.Test
  * }
  */
 class FormValidatorTest {
-
-    // TODO 1: Протестируй валидный email
-    // Проверь, что result.isValid = true и errorMessage = null
-    @Test
-    fun `valid email passes validation`() {
-        // Arrange: валидный email (например "user@domain.com")
-
-        // Act: вызови FormValidator.validateEmail(email)
-
-        // Assert: assertTrue(result.isValid)
+    @ParameterizedTest
+    @MethodSource("validationEmail")
+    fun `validate emails`(email: String, expectedIsValid: Boolean, expectedMessage: String?) {
+        val result = FormValidator.validateEmail(email)
+        assertEquals(expectedIsValid, result.isValid)
+        if (expectedMessage != null) {
+            val message = result.errorMessage
+            assertNotNull(message)
+            assertTrue(message?.contains(expectedMessage) == true)
+        }
     }
 
-    // TODO 2: Протестируй email без домена
-    // Проверь, что result.isValid = false и errorMessage содержит "email"
-    @Test
-    fun `email without domain fails validation`() {
-        // Arrange: email = "user@" (пустой домен)
-
-        // Act: вызови FormValidator.validateEmail(email)
-
-        // Assert: assertFalse(result.isValid)
-        //         assertTrue(result.errorMessage?.contains("email") == true)
-    }
-
-    // TODO 3: Протестируй email без символа @
-    // Проверь, что result.isValid = false
-    @Test
-    fun `email without at symbol fails validation`() {
-        // Arrange: email = "userdomain.com" (без @)
-
-        // Act: вызови FormValidator.validateEmail(email)
-
-        // Assert: assertFalse(result.isValid)
-    }
-
-    // TODO 4: Протестируй пустой email
-    // Проверь, что result.isValid = false
-    @Test
-    fun `empty email fails validation`() {
-        // Arrange: email = ""
-
-        // Act: вызови FormValidator.validateEmail(email)
-
-        // Assert: assertFalse(result.isValid)
+    companion object {
+        @JvmStatic
+        fun validationEmail(): Stream<Arguments> = Stream.of(
+            Arguments.of("test@test.ru", true, null),
+            Arguments.of("test@", false, "Некорректный email"),
+            Arguments.of("testtest.ru", false, "Некорректный email"),
+            Arguments.of("", false, "Email не может быть пустым"),
+        )
     }
 
     // TODO 5: Протестируй валидное имя (≥ 3 символов)
     // Проверь, что result.isValid = true
     @Test
     fun `valid name passes validation`() {
-        // Arrange: name = "Анна" (4 символа)
+        val name = "Igor"
+        val result = FormValidator.validateName(name)
 
-        // Act: вызови FormValidator.validateName(name)
-
-        // Assert: assertTrue(result.isValid)
+        assertTrue(result.isValid)
+        assertNull(result.errorMessage)
     }
 
     // TODO 6: Протестируй имя короче 3 символов
     // Проверь, что result.isValid = false и errorMessage содержит "символ"
     @Test
     fun `name too short fails validation`() {
-        // Arrange: name = "Ан" (2 символа)
+        val name = "Ig"
+        val result = FormValidator.validateName(name)
 
-        // Act: вызови FormValidator.validateName(name)
-
-        // Assert: assertFalse(result.isValid)
-        //         assertTrue(result.errorMessage?.contains("символ") == true)
+        assertFalse(result.isValid)
+        assertEquals("Имя должно содержать минимум 3 символа", result.errorMessage)
     }
 }

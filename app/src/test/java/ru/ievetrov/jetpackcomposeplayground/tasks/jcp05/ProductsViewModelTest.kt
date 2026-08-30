@@ -5,7 +5,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -51,9 +51,8 @@ import org.junit.Test
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProductsViewModelTest {
-
     private val repository: ProductsRepository = mockk(relaxed = true)
-    private val testDispatcher = UnconfinedTestDispatcher()
+    private val testDispatcher = StandardTestDispatcher()
 
     private lateinit var viewModel: ProductsViewModel
 
@@ -70,70 +69,95 @@ class ProductsViewModelTest {
     // TODO 1: Протестируй начальное состояние ViewModel
     // ViewModel в init вызывает loadProducts(), поэтому нужно настроить стаб ДО создания
     @Test
-    fun `initial state shows loading`() = runTest {
-        // Arrange: настрой coEvery { repository.loadProducts() } чтобы вернуть Result.success(emptyList())
-
-        // Act: создай ViewModel И вызови advanceUntilIdle()
-
-        // Assert: через viewModel.uiState.test { } проверь что isLoading = true (это первое emitted состояние)
+    fun `initial state shows loading`() = runTest(testDispatcher) {
+        coEvery { repository.loadProducts() } returns Result.success(emptyList())
+        //coEvery { repository.loadProducts() } coAnswers { delay(1000); Result.success(emptyList()) }
+        viewModel = ProductsViewModel(repository)
+        assertEquals(true, viewModel.uiState.value.isLoading)
     }
 
     // TODO 2: Протестируй успешную загрузку продуктов
     // Проверь, что после загрузки isLoading = false и список не пуст
     @Test
-    fun `loads products successfully`() = runTest {
-        // Arrange: создай список фейковых продуктов и настрой стаб репозитория
-        // val fakeProducts = listOf(ProductUiModel(1, "Молоко", "89.9", ""), ...)
-        // coEvery { repository.loadProducts() } returns Result.success(fakeProducts)
+    fun `loads products successfully`() = runTest(testDispatcher) {
+        val fakeProducts = listOf(
+            ProductUiModel(1, "Молоко", "89.9", ""),
+            ProductUiModel(2, "Хлеб", "49.5", ""),
+        )
 
-        // Act: создай ViewModel и дождись корутин
-        // val viewModel = ProductsViewModel(repository)
-        // advanceUntilIdle()
+        coEvery { repository.loadProducts() } returns Result.success(fakeProducts)
 
-        // Assert: через Turbine проверь второе emitted состояние (после загрузки)
-        // viewModel.uiState.test {
-        //     val initialState = awaitItem()  // isLoading = true
-        //     val loadedState = awaitItem()   // isLoading = false, products не пуст
-        //     assertFalse(loadedState.isLoading)
-        //     assertEquals(3, loadedState.products.size)
-        // }
+        viewModel = ProductsViewModel(repository)
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            //val initialState = awaitItem()  // isLoading = true
+            val state = awaitItem()   // isLoading = false, products не пуст
+            assertFalse(state.isLoading)
+            assertEquals(2, state.products.size)
+        }
     }
 
     // TODO 3: Протестируй ошибку загрузки
     // Проверь, что при ошибке: isLoading = false, error не null
     @Test
-    fun `handles load error`() = runTest {
-        // Arrange: coEvery { repository.loadProducts() } returns Result.failure(RuntimeException("Сетевая ошибка"))
+    fun `handles load error`() = runTest(testDispatcher) {
+        coEvery { repository.loadProducts() } returns Result.failure(RuntimeException("Сетевая ошибка"))
 
-        // Act: создай ViewModel, advanceUntilIdle()
+        viewModel = ProductsViewModel(repository)
+        advanceUntilIdle()
 
-        // Assert: проверь что error != null и содержит сообщение об ошибке
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertFalse(state.isLoading)
+            assertFalse(state.error.isNullOrEmpty())
+        }
     }
 
     // TODO 4: Протестируй фильтрацию по поисковому запросу
     // После загрузки вызови onSearchChanged("Мол") — в списке должен остаться только "Молоко"
     @Test
-    fun `search filters products`() = runTest {
-        // Arrange: стаб репозитория возвращает несколько продуктов (Молоко, Хлеб, Сыр)
-        // Создай ViewModel и дождись загрузки
+    fun `search filters products`() = runTest(testDispatcher) {
+        val fakeProducts = listOf(
+            ProductUiModel(1, "Молоко", "89.9", ""),
+            ProductUiModel(2, "Хлеб", "49.5", ""),
+            ProductUiModel(3, "Масло", "149.5", ""),
+        )
 
-        // Act: вызови viewModel.onSearchChanged("Мол")
+        coEvery { repository.loadProducts() } returns Result.success(fakeProducts)
 
-        // Assert: через Turbine проверь что products.size == 1 и содержит "Молоко"
+        viewModel = ProductsViewModel(repository)
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            awaitItem()
+            viewModel.onSearchChanged("Мол")
+            val state = expectMostRecentItem()
+            assertEquals(1, state.products.size)
+            assertTrue(state.products[0].name.contains("Молоко"))
+        }
     }
 
     // TODO 5: Протестируй добавление в избранное
     // Проверь с помощью awaitItem() что state обновился немедленно
     @Test
-    fun `adding to favorites updates state`() = runTest {
-        // Arrange: настрой стаб, создай ViewModel, загрузи продукты
+    fun `adding to favorites updates state`() = runTest(testDispatcher) {
+        val fakeProducts = listOf(
+            ProductUiModel(1, "Молоко", "89.9", ""),
+            ProductUiModel(2, "Хлеб", "49.5", ""),
+            ProductUiModel(3, "Масло", "149.5", ""),
+        )
 
-        // Act: вызови viewModel.addToFavorites(productId = 1)
+        coEvery { repository.loadProducts() } returns Result.success(fakeProducts)
 
-        // Assert: через Turbine получи новый state и проверь favorites
-        // viewModel.uiState.test {
-        //     val state = awaitItem()
-        //     assertTrue(state.favorites.contains(1))
-        // }
+        viewModel = ProductsViewModel(repository)
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            awaitItem()
+            viewModel.addToFavorites(productId = 1)
+            val state = awaitItem()
+            assertTrue(state.favorites.contains(1))
+        }
     }
 }

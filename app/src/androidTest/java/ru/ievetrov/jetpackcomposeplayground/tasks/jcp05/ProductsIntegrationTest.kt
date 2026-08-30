@@ -45,11 +45,12 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class ProductsIntegrationTest {
-
     private lateinit var mockWebServer: MockWebServer
     private lateinit var database: ProductsDatabase
     private lateinit var dao: ProductDao
     private lateinit var repository: ProductsRepositoryImpl
+
+    private val productsJson = """[{"id":1,"name":"Молоко","price":89.9,"description":"Свежее"}]"""
 
     @Before
     fun setUp() {
@@ -69,8 +70,10 @@ class ProductsIntegrationTest {
 
     @After
     fun tearDown() {
-        database.close()
         mockWebServer.shutdown()
+        if (::database.isInitialized) {
+            database.close()
+        }
     }
 
     // TODO 1: Протестируй успешную загрузку и сохранение в базу данных
@@ -78,15 +81,13 @@ class ProductsIntegrationTest {
     @Test
     fun `fetchesProductsAndSavesToDatabase`() = runTest {
         // Arrange: подготовь JSON и поставь в очередь MockWebServer
-        // val json = """[{"id":1,"name":"Молоко","price":89.9,"description":"Свежее"}]"""
-        // mockWebServer.enqueue(MockResponse().setBody(json).setResponseCode(200))
+        mockWebServer.enqueue(MockResponse().setBody(productsJson).setResponseCode(200))
 
-        // Act: вызови repository.loadProducts()
+        val result = repository.loadProducts()
 
-        // Assert: результат успешный, dao.getAllProducts().isNotEmpty()
-        // assertTrue(result.isSuccess)
-        // assertTrue(dao.getAllProducts().isNotEmpty())
-        // assertEquals("Молоко", result.getOrThrow().first().name)
+        assertTrue(result.isSuccess)
+        assertTrue(dao.getAllProducts().isNotEmpty())
+        assertEquals("Молоко", result.getOrThrow().first().name)
     }
 
     // TODO 2: Протестируй возврат данных из кеша при ошибке сети
@@ -94,18 +95,18 @@ class ProductsIntegrationTest {
     @Test
     fun `fallsBackToCacheWhenApiUnavailable`() = runTest {
         // Arrange: сначала загружаем данные
-        // val json = """[{"id":1,"name":"Молоко","price":89.9,"description":"Свежее"}]"""
-        // mockWebServer.enqueue(MockResponse().setBody(json).setResponseCode(200))
-        // repository.loadProducts()
+        mockWebServer.enqueue(MockResponse().setBody(productsJson).setResponseCode(200))
+        val firstResult = repository.loadProducts()
 
         // "Выключаем" сервер
-        // mockWebServer.enqueue(MockResponse().setResponseCode(500))
+        mockWebServer.enqueue(MockResponse().setResponseCode(500))
 
         // Act: повторная загрузка — сервер недоступен
+        val cacheResult = repository.loadProducts()
 
         // Assert: результат успешный (данные из кеша)
-        // assertTrue(result.isSuccess)
-        // assertEquals("Молоко", result.getOrThrow().first().name)
+        assertTrue(cacheResult.isSuccess)
+        assertEquals("Молоко", cacheResult.getOrThrow().first().name)
     }
 
     // TODO 3: Протестируй очистку кеша
@@ -113,14 +114,13 @@ class ProductsIntegrationTest {
     @Test
     fun `cacheClearedOnLogout`() = runTest {
         // Arrange: загрузи данные
-        // val json = """[{"id":1,"name":"Молоко","price":89.9,"description":"Свежее"}]"""
-        // mockWebServer.enqueue(MockResponse().setBody(json).setResponseCode(200))
-        // repository.loadProducts()
+        mockWebServer.enqueue(MockResponse().setBody(productsJson).setResponseCode(200))
+        repository.loadProducts()
 
         // Act: очисти кеш
-        // repository.clearCache()
+        repository.clearCache()
 
         // Assert: DAO пустой
-        // assertTrue(dao.getAllProducts().isEmpty())
+        assertTrue(dao.getAllProducts().isEmpty())
     }
 }

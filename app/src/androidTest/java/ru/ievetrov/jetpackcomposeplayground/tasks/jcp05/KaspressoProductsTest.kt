@@ -1,12 +1,19 @@
 package ru.ievetrov.jetpackcomposeplayground.tasks.jcp05
 
-import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.kaspersky.components.composesupport.config.withComposeSupport
+import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import io.github.kakaocup.compose.node.element.ComposeScreen.Companion.onComposeScreen
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import ru.ievetrov.jetpackcomposeplayground.MainActivity
+import ru.ievetrov.screen.ProductsComposeScreen
 
 /**
  * JCP-05: Практика написания тестов — Kaspresso-тест (задание 6, дополнительное)
@@ -46,10 +53,11 @@ import ru.ievetrov.jetpackcomposeplayground.MainActivity
  * }
  */
 @RunWith(AndroidJUnit4::class)
-class KaspressoProductsTest : TestCase() {
-
+class KaspressoProductsTest : TestCase(
+    kaspressoBuilder = Kaspresso.Builder.withComposeSupport()
+) {
     @get:Rule
-    val activityRule = ActivityScenarioRule(MainActivity::class.java)
+    val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     /**
      * Тест 1: Экран продуктов открывается при запуске
@@ -60,20 +68,27 @@ class KaspressoProductsTest : TestCase() {
      * 3. Нажимаем на неё
      * 4. Проверяем что открылся экран с тегом "products_screen"
      */
+
     @Test
     fun shouldDisplayProductsScreenOnLaunch() = run {
-        // TODO 1: Перейти к экрану продуктов
-        // Подсказка: используйте onView(withText("Тестирование экрана продуктов")).perform(click())
-        // внутри step("Открыть экран продуктов") { }
         step("Открыть экран продуктов") {
-            // TODO: нажмите на карточку "Тестирование экрана продуктов" в MainScreen
+            composeTestRule
+                .onNodeWithText("Тестирование экрана продуктов")
+                .performScrollTo()
+
+            composeTestRule
+                .onNodeWithText("Тестирование экрана продуктов")
+                .performClick()
         }
 
-        // TODO 2: Проверить что экран отображается
-        // Подсказка: используйте onView(withTagValue(equalTo("products_screen")))
-        // или onView(withId(...)).check(matches(isDisplayed()))
         step("Проверить что экран продуктов открылся") {
-            // TODO: проверьте что элемент с тегом "products_screen" виден
+            // Проверяем конкретные элементы вместо всего экрана
+            onComposeScreen<ProductsComposeScreen>(composeTestRule) {
+                searchField { assertIsDisplayed() }
+                loadingIndicator { assertIsNotDisplayed() }
+
+                assertIsDisplayed()
+            }
         }
     }
 
@@ -88,8 +103,17 @@ class KaspressoProductsTest : TestCase() {
      */
     @Test
     fun shouldFilterProductsBySearch() = run {
+        val product = "Молоко"
+
         step("Открыть экран продуктов") {
             // TODO: нажмите на карточку "Тестирование экрана продуктов" в MainScreen
+            composeTestRule
+                .onNodeWithText("Тестирование экрана продуктов")
+                .performScrollTo()
+
+            composeTestRule
+                .onNodeWithText("Тестирование экрана продуктов")
+                .performClick()
         }
 
         // TODO 3: Ввести текст в поле поиска
@@ -97,6 +121,13 @@ class KaspressoProductsTest : TestCase() {
         //     .perform(typeText("Молоко"), closeSoftKeyboard())
         step("Ввести запрос в поиск") {
             // TODO: найдите поле с тегом "search_field" и введите текст
+            onComposeScreen<ProductsComposeScreen>(composeTestRule) {
+                loadingIndicator { assertIsNotDisplayed() }
+                searchField {
+                    assertIsDisplayed()
+                    performTextInput(product)
+                }
+            }
         }
 
         // TODO 4: Проверить результаты фильтрации
@@ -104,6 +135,12 @@ class KaspressoProductsTest : TestCase() {
         //            onView(withText("Хлеб")).check(doesNotExist())
         step("Проверить отфильтрованные продукты") {
             // TODO: проверьте что нужный продукт виден, а остальные скрыты
+            onComposeScreen<ProductsComposeScreen>(composeTestRule) {
+                productList { assertIsDisplayed() }
+
+                milk { assertIsDisplayed() }
+                bread { assertDoesNotExist() }
+            }
         }
     }
 }

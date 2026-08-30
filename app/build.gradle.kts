@@ -48,6 +48,9 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
         }
     }
 }
@@ -97,6 +100,8 @@ dependencies {
     androidTestImplementation(libs.turbine)
     androidTestImplementation(libs.kaspresso)
     androidTestImplementation(libs.kaspresso.compose)
+
+    testImplementation(libs.junit.jupiter)
 
     // Инструменты разработки
     debugImplementation(libs.androidx.ui.tooling)
