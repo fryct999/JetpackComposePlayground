@@ -1,6 +1,7 @@
 [versions]
 # Плагины
 androidGradlePlugin = "8.9.2"
+junitJupiter = "5.10.2"
 kotlinVersion = "2.0.21"
 kotlinComposeCompiler = "1.5.3"
 
@@ -15,12 +16,12 @@ composeBom = "2025.04.01"
 # Тестирование
 junit = "4.13.2"
 androidJunit = "1.2.1"
-espressoCore = "3.6.1"
+espressoCore = "3.7.0"
 mockk = "1.13.14"
 turbine = "1.2.0"
 coroutinesTest = "1.9.0"
 mockwebserver = "4.12.0"
-kaspresso = "1.5.5"
+kaspresso = "1.5.3"
 ksp = "2.0.21-1.0.28"
 room = "2.6.1"
 
@@ -57,6 +58,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidJunit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-viewmodel-testing = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-testing", version.ref = "lifecycleRuntimeKtx" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
@@ -67,8 +69,8 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
-kaspresso = { group = "io.github.kakaocup", name = "kaspresso", version.ref = "kaspresso" }
-kaspresso-compose = { group = "io.github.kakaocup", name = "kaspresso-compose-support", version.ref = "kaspresso" }
+kaspresso = { module = "com.kaspersky.android-components:kaspresso", version.ref = "kaspresso" }
+kaspresso-compose = { module = "com.kaspersky.android-components:kaspresso-compose-support", version.ref = "kaspresso" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 [plugins]
